@@ -1,0 +1,15 @@
+/*
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/*.js
+  Content-Type: application/javascript
+
+/*.mjs
+  Content-Type: application/javascript
+
+/*.jsx
+  Content-Type: text/javascript
+
+/*.json
+  Content-Type: application/json

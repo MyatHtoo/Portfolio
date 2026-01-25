@@ -47,6 +47,54 @@ export default defineConfig({
         } catch (err) {
           // Folder might not exist, that's ok
         }
+
+        // Copy .htaccess for proper MIME types on hosting
+        try {
+          copyFileSync('.htaccess', 'dist/.htaccess')
+          console.log('✓ .htaccess copied to dist')
+        } catch (err) {
+          console.log('ℹ No .htaccess file found (optional)')
+        }
+
+        // Copy web.config for IIS/Azure hosting
+        try {
+          copyFileSync('web.config', 'dist/web.config')
+          console.log('✓ web.config copied to dist')
+        } catch (err) {
+          console.log('ℹ No web.config file found (optional)')
+        }
+
+        // Copy _headers for Netlify hosting
+        try {
+          copyFileSync('_headers', 'dist/_headers')
+          console.log('✓ _headers copied to dist')
+        } catch (err) {
+          console.log('ℹ No _headers file found (optional)')
+        }
+
+        // Copy vercel.json for Vercel hosting
+        try {
+          copyFileSync('vercel.json', 'dist/vercel.json')
+          console.log('✓ vercel.json copied to dist')
+        } catch (err) {
+          console.log('ℹ No vercel.json file found (optional)')
+        }
+
+        // Copy Edu folder if exists
+        try {
+          cpSync('Edu', 'dist/Edu', { recursive: true })
+          console.log('✓ Edu folder copied to dist')
+        } catch (err) {
+          // Folder might not exist
+        }
+
+        // Copy achievements folder if exists
+        try {
+          cpSync('achievements', 'dist/achievements', { recursive: true })
+          console.log('✓ Achievements folder copied to dist')
+        } catch (err) {
+          // Folder might not exist
+        }
       }
     }
   ],
