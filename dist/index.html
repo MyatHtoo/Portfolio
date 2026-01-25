@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" href="/assets/favicon-BdVP8ACR.png">
     <title>Portfolio | Harry</title>
     
-  <script type="module" crossorigin src="/assets/index-LZaxq0ws.js"></script>
+  <script type="module" crossorigin src="/assets/index-D_rvaPLC.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-CiNaGIXR.css">
 </head>
 <body oncontextmenu="return false">
@@ -47,9 +47,16 @@
         height: 100% !important;
         z-index: 9995 !important;
         pointer-events: none !important;
+        /* Debug: uncomment to see the root container */
+        /* border: 2px solid red !important; */
       }
       #root > * {
         pointer-events: auto !important;
+      }
+      #root canvas {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
       }
       header {
         position: relative;

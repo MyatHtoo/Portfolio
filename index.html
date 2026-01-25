@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="./assets/css/style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./assets/images/favicon.png">
     <title>Portfolio | Harry</title>
     
 </head>
@@ -46,9 +44,16 @@
         height: 100% !important;
         z-index: 9995 !important;
         pointer-events: none !important;
+        /* Debug: uncomment to see the root container */
+        /* border: 2px solid red !important; */
       }
       #root > * {
         pointer-events: auto !important;
+      }
+      #root canvas {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
       }
       header {
         position: relative;
