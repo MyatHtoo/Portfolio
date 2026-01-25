@@ -3,6 +3,9 @@ let currentSlide = 0;
 let totalSlides = 0;
 let maxSlide = 0;
 let slidesPerView = 3;
+let modal;
+let modalImage;
+let lastFocusedElement;
 
 function getSlidesPerView() {
     if (window.innerWidth <= 768) return 1;
@@ -15,6 +18,20 @@ function initSlider() {
     totalSlides = slides.length;
     
     if (totalSlides === 0) return;
+
+    slides.forEach((slide) => {
+        const image = slide.querySelector('img');
+        if (!image) return;
+        slide.setAttribute('role', 'button');
+        slide.setAttribute('tabindex', '0');
+        slide.addEventListener('click', () => openCertificateModal(image.src, image.alt || 'Certificate'));
+        slide.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openCertificateModal(image.src, image.alt || 'Certificate');
+            }
+        });
+    });
     
     // Calculate maxSlide based on screen size
     slidesPerView = getSlidesPerView();
@@ -78,13 +95,44 @@ function goToSlide(slideIndex) {
 let autoPlayInterval;
 
 function startAutoPlay() {
+    stopAutoPlay();
     autoPlayInterval = setInterval(() => {
         moveSlide(1);
     }, 5000);
 }
 
 function stopAutoPlay() {
-    clearInterval(autoPlayInterval);
+    if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+    }
+}
+
+function openCertificateModal(imageSrc, title) {
+    if (!modal || !modalImage) return;
+    modalImage.src = imageSrc;
+    modalImage.alt = title;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    lastFocusedElement = document.activeElement;
+    const closeButton = modal.querySelector('.certificate-modal__close');
+    if (closeButton) closeButton.focus();
+    document.body.style.overflow = 'hidden';
+    stopAutoPlay();
+}
+
+function closeCertificateModal() {
+    if (!modal || !modalImage) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    modalImage.removeAttribute('src');
+    modalImage.alt = '';
+    document.body.style.overflow = '';
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
+    startAutoPlay();
 }
 
 // Pause auto play on hover
@@ -93,6 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sliderContainer) {
         sliderContainer.addEventListener('mouseenter', stopAutoPlay);
         sliderContainer.addEventListener('mouseleave', startAutoPlay);
+    }
+
+    modal = document.getElementById('certificateModal');
+    if (modal) {
+        modalImage = document.getElementById('certificateModalImage');
+        modal.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.hasAttribute('data-close-modal') || target === modal) {
+                closeCertificateModal();
+            }
+        });
     }
 });
 
@@ -127,4 +186,10 @@ window.addEventListener('resize', () => {
 window.addEventListener('load', () => {
     initSlider();
     startAutoPlay();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal?.classList.contains('is-open')) {
+        closeCertificateModal();
+    }
 });

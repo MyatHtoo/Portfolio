@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
-import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
+import { useGLTF, useTexture, Environment, Lightformer, RoundedBox } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
@@ -27,20 +27,22 @@ export default function App() {
 }
 
 function Band({ maxSpeed = 50, minSpeed = 10 }) {
-  const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef() // prettier-ignore
-  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3() // prettier-ignore
+  const band = useRef(), strapCap = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef() // prettier-ignore
+  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3(), tmp = new THREE.Vector3() // prettier-ignore
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
   const [texture, idTexture] = useTexture(['https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg', '/Profiles/ID.png'])
-  const { width, height } = useThree((state) => state.size)
+  const { size, viewport } = useThree((state) => ({ size: state.size, viewport: state.viewport }))
+  const { width, height } = size
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState(false)
   const [hovered, hover] = useState(false)
+  const anchorX = Math.max(0, viewport.width / 2 - 3.3) // keep the card right-leaning but slightly closer to center
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
-  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]) // prettier-ignore
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.35, 0]]) // prettier-ignore
 
   useEffect(() => {
     if (hovered) {
@@ -66,17 +68,24 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
       }
       
       // Fix most of the jitter when over pulling the card
-      ;[j1, j2].forEach((ref) => {
+      ;[j1, j2, j3].forEach((ref) => {
         if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation())
         const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())))
         ref.current.lerped.lerp(ref.current.translation(), delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)))
       })
       // Calculate catmul curve
-      curve.points[0].copy(j3.current.translation())
+      curve.points[0].copy(j3.current.lerped)
       curve.points[1].copy(j2.current.lerped)
       curve.points[2].copy(j1.current.lerped)
       curve.points[3].copy(fixed.current.translation())
       band.current.geometry.setPoints(curve.getPoints(32))
+      if (strapCap.current) {
+        const endPos = j3.current.lerped
+        const cardPos = card.current.translation()
+        tmp.copy(cardPos).sub(endPos).normalize().multiplyScalar(0.012)
+        strapCap.current.position.copy(endPos).add(tmp)
+        strapCap.current.quaternion.copy(state.camera.quaternion)
+      }
       // Tilt it back towards the screen
       ang.copy(card.current.angvel())
       rot.copy(card.current.rotation())
@@ -91,7 +100,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      <group position={[anchorX, 4, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -99,14 +108,14 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
         <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[1, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.55, 0.95, 0.01]} />
+          <CuboidCollider args={[0.48, 0.83, 0.01]} />
           <group
-            scale={1.8}
-            position={[0, -0.95, -0.05]}
+            scale={1.6}
+            position={[0, -0.70, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
@@ -143,8 +152,11 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
       </group>
       <mesh ref={band}>
         <meshLineGeometry />
-        <meshLineMaterial color="white" depthTest={false} resolution={[width, height]} useMap map={texture} repeat={[-3, 1]} lineWidth={1} />
+        <meshLineMaterial color="white" depthTest={false} resolution={[width, height]} useMap map={texture} repeat={[-3, 1]} lineWidth={0.8} />
       </mesh>
+      <RoundedBox ref={strapCap} args={[0.22, 0.22, 0.04]} radius={0.04} smoothness={3} renderOrder={1}>
+        <meshStandardMaterial color="#0051c5" metalness={0.45} roughness={0.2} />
+      </RoundedBox>
     </>
   )
 }

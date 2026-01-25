@@ -1,6 +1,56 @@
 // GitHub Projects Loader
 const GITHUB_USERNAME = 'MyatHtoo';
 const MAX_PROJECTS = 9; // Number of projects to display
+const README_MAX_LENGTH = 280;
+
+async function fetchReadmePreview(repo) {
+    const branch = repo.default_branch || 'main';
+    const readmeUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repo.name}/${branch}/README.md`;
+    try {
+        const response = await fetch(readmeUrl, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('README missing');
+        }
+        const markdown = await response.text();
+        return createReadmeExcerpt(markdown);
+    } catch (error) {
+        console.warn(`README not available for ${repo.name}:`, error.message);
+        return {
+            preview: 'README not available for this project yet.',
+            full: 'README not available for this project yet.'
+        };
+    }
+}
+
+function createReadmeExcerpt(markdown) {
+    if (!markdown) {
+        return {
+            preview: 'README not available for this project yet.',
+            full: 'README not available for this project yet.'
+        };
+    }
+    const withoutCodeBlocks = markdown.replace(/```[\s\S]*?```/g, '');
+    const withoutImages = withoutCodeBlocks.replace(/!\[[^\]]*\]\([^)]*\)/g, '');
+    const withoutLinks = withoutImages.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+    const plainText = withoutLinks
+        .replace(/^#+\s/gm, '')
+        .replace(/[*_>`~|-]/g, '')
+        .replace(/\r?\n\s*\r?\n/g, '\n\n')
+        .trim();
+    const excerpt = plainText.split(/\n{2,}/).find((block) => block.trim().length > 0) || plainText.split('\n').find((line) => line.trim().length > 0) || plainText;
+    if (!excerpt) {
+        return {
+            preview: 'README not available for this project yet.',
+            full: 'README not available for this project yet.'
+        };
+    }
+    const trimmed = excerpt.trim();
+    const preview = trimmed.length > README_MAX_LENGTH ? `${trimmed.slice(0, README_MAX_LENGTH - 1).trim()}…` : trimmed;
+    return {
+        preview,
+        full: trimmed
+    };
+}
 
 async function fetchGitHubProjects() {
     try {
@@ -22,10 +72,21 @@ async function fetchGitHubProjects() {
                 }
                 // Then by updated date
                 return new Date(b.updated_at) - new Date(a.updated_at);
-            });
+            })
+            .slice(0, MAX_PROJECTS);
+
+        const reposWithReadme = await Promise.all(
+            filteredRepos.map(async (repo) => {
+                const { preview, full } = await fetchReadmePreview(repo);
+                return {
+                    ...repo,
+                    readmeExcerpt: preview,
+                    readmeExcerptFull: full
+                };
+            })
+        );
         
-        // Return all projects, not limited
-        return filteredRepos;
+        return reposWithReadme;
     } catch (error) {
         console.error('Error fetching GitHub projects:', error);
         return [];
@@ -61,7 +122,8 @@ function createProjectCard(repo) {
     const card = document.createElement('div');
     card.className = 'project-card';
     
-    const description = repo.description || 'No description available';
+    const description = repo.readmeExcerpt || 'README not available for this project yet.';
+    const tooltipText = repo.readmeExcerptFull || repo.readmeExcerpt || 'README not available for this project yet.';
     const language = repo.language || 'Unknown';
     const stars = repo.stargazers_count || 0;
     const forks = repo.forks_count || 0;
@@ -80,7 +142,7 @@ function createProjectCard(repo) {
             </div>
         </div>
         
-        <p class="description">${description}</p>
+        <p class="description" title="${tooltipText.replace(/"/g, '&quot;')}">${description}</p>
         
         ${topics.length > 0 ? `<div class="project-tags">${tagsHTML}</div>` : ''}
         
