@@ -43,42 +43,7 @@ export default function App() {
     )
   }
 
-  return (
-    <Canvas 
-      camera={{ position: [0, 0, 13], fov: 25 }} 
-      style={{ 
-        background: 'transparent', 
-        width: '100%', 
-        height: '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        display: 'block'
-      }} 
-      gl={{ preserveDrawingBuffer: true, antialias: false }}
-      onCreated={({ gl }) => {
-        console.log('✅ Canvas created successfully!')
-        console.log('WebGL Renderer:', gl)
-      }}
-      onError={(error) => {
-        console.error('❌ Canvas error:', error)
-        setError(error)
-      }}
-    >
-      <ErrorBoundary>
-        <ambientLight intensity={Math.PI} />
-        <Physics interpolate gravity={[0, -5, 0]} timeStep={1 / 60}>
-          <Band />
-        </Physics>
-        <Environment background={false} blur={0.75}>
-          <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-          <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-          <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-          <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-        </Environment>
-      </ErrorBoundary>
-    </Canvas>
-  )
+  return null
 }
 
 function ErrorBoundary({ children }) {
@@ -88,7 +53,7 @@ function ErrorBoundary({ children }) {
 function Band({ maxSpeed = 50, minSpeed = 10 }) {
   const band = useRef(), strapCap = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef() // prettier-ignore
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3(), tmp = new THREE.Vector3() // prettier-ignore
-  const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
+  const segmentProps = { type: 'fixed', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   
   const { nodes, materials } = useGLTF(tagUrl)
   const [texture, idTexture] = useTexture([bandUrl, '/Profiles/ID.png'])
@@ -177,7 +142,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
         <RigidBody position={[1, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps}>
           <CuboidCollider args={[0.48, 0.83, 0.01]} />
           <group
             scale={1.6}
