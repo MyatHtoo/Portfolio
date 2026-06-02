@@ -97,32 +97,32 @@ const skillGroups = [
     {
         title: 'Cloud & Backend',
         items: ['HuaweiCloud', 'AWS', 'Firebase'],
-        accentBg: '#d8f4f0',
-        accentColor: '#0f766e'
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#8ed0ff'
     },
     {
         title: 'IOT & Systems',
         items: ['Arduino', 'Raspberry Pi', 'Codesys', 'Wireshark'],
-        accentBg: '#fff0d6',
-        accentColor: '#b45309'
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#ffd166'
     },
     {
         title: 'Databases',
         items: ['MySQL', 'MongoDB'],
-        accentBg: '#ece8ff',
-        accentColor: '#5b4fd4'
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#bfa6ff'
     },
     {
         title: 'Languages & Web',
         items: ['Python', 'C#', 'HTML5', 'CSS3', 'WordPress'],
-        accentBg: '#eef8d8',
-        accentColor: '#5b8c00'
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#b7f5b3'
     },
     {
         title: 'Design & Tools',
         items: ['Unity', 'Figma', 'Linux', 'Git VCS', 'GitHub'],
-        accentBg: '#fde8e8',
-        accentColor: '#c2410c'
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#ffb3b3'
     }
 ];
 
