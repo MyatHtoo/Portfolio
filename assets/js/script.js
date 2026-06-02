@@ -96,7 +96,7 @@ async function fetchData(type = "skills") {
 const skillGroups = [
     {
         title: 'Cloud & Backend',
-        items: ['HuaweiCloud', 'AWS', 'Firebase'],
+        items: ['HuaweiCloud', 'AWS', 'Firebase', 'Postman'],
         accentBg: 'rgba(255, 255, 255, 0.08)',
         accentColor: '#8ed0ff'
     },
