@@ -93,18 +93,61 @@ async function fetchData(type = "skills") {
     }
 }
 
+const skillGroups = [
+    {
+        title: 'Cloud & Backend',
+        items: ['HuaweiCloud', 'AWS', 'Firebase'],
+        accentBg: '#d8f4f0',
+        accentColor: '#0f766e'
+    },
+    {
+        title: 'IOT & Systems',
+        items: ['Arduino', 'Raspberry Pi', 'Codesys', 'Wireshark'],
+        accentBg: '#fff0d6',
+        accentColor: '#b45309'
+    },
+    {
+        title: 'Databases',
+        items: ['MySQL', 'MongoDB'],
+        accentBg: '#ece8ff',
+        accentColor: '#5b4fd4'
+    },
+    {
+        title: 'Languages & Web',
+        items: ['Python', 'C#', 'HTML5', 'CSS3', 'WordPress'],
+        accentBg: '#eef8d8',
+        accentColor: '#5b8c00'
+    },
+    {
+        title: 'Design & Tools',
+        items: ['Unity', 'Figma', 'Linux', 'Git VCS', 'GitHub'],
+        accentBg: '#fde8e8',
+        accentColor: '#c2410c'
+    }
+];
+
 function showSkills(skills) {
     let skillsContainer = document.getElementById("skillsContainer");
     let skillHTML = "";
-    skills.forEach(skill => {
+
+    skillGroups.forEach(group => {
+        const matchedSkills = group.items
+            .map(name => skills.find(skill => skill.name === name))
+            .filter(Boolean);
+
+        if (!matchedSkills.length) {
+            return;
+        }
+
         skillHTML += `
-        <div class="bar">
-              <div class="info">
-                <img src=${skill.icon} alt="skill" />
-                <span>${skill.name}</span>
-              </div>
-            </div>`
+        <div class="skill-group" style="--skill-accent-bg: ${group.accentBg}; --skill-accent-color: ${group.accentColor};">
+          <div class="skill-group__label">${group.title}</div>
+          <div class="skill-group__items">
+            ${matchedSkills.map(skill => `<span class="skill-pill">${skill.name}</span>`).join('')}
+          </div>
+        </div>`;
     });
+
     skillsContainer.innerHTML = skillHTML;
 }
 

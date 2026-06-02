@@ -40,6 +40,10 @@
         "icon": "https://img.icons8.com/color/48/000000/arduino.png"
     },
     {
+        "name": "Codesys",
+        "icon": "https://img.icons8.com/color/48/000000/automation.png"
+    },
+    {
         "name": "Raspberry Pi",
         "icon": "https://img.icons8.com/color/48/000000/raspberry-pi.png"
     },
