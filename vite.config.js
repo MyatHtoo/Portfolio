@@ -40,6 +40,14 @@ export default defineConfig({
           console.error('Error copying skills.json:', err)
         }
 
+        // Copy CV PDF so it is available after a fresh production build
+        try {
+          copyFileSync('CV_HlaMinMyatHtoo.pdf', 'dist/CV_HlaMinMyatHtoo.pdf')
+          console.log('✓ CV PDF copied to dist')
+        } catch (err) {
+          console.error('Error copying CV PDF:', err)
+        }
+
         // Copy certificates folder if exists
         try {
           cpSync('certificates', 'dist/certificates', { recursive: true })
