@@ -4,8 +4,16 @@
         "icon": "https://img.icons8.com/color/48/000000/python--v1.png"
     },
     {
-        "name": "MySQL",
-        "icon": "https://img.icons8.com/color/48/000000/mysql-logo.png"
+        "name": "skimage",
+        "icon": "https://img.icons8.com/fluency/48/000000/image.png"
+    },
+    {
+        "name": "Tesseract",
+        "icon": "https://img.icons8.com/fluency/48/000000/ocr.png"
+    },
+    {
+        "name": "OpenCV",
+        "icon": "https://img.icons8.com/color/48/000000/opencv.png"
     },
     {
         "name": "MongoDB",
@@ -26,6 +34,14 @@
     {
         "name": "Postman",
         "icon": "https://img.icons8.com/color/48/000000/postman-api.png"
+    },
+    {
+        "name": "PostgreSQL",
+        "icon": "https://img.icons8.com/color/48/000000/postgresql.png"
+    },
+    {
+        "name": "OracleCloud",
+        "icon": "https://img.icons8.com/color/48/000000/oracle-logo.png"
     },
     {
         "name": "HTML5",

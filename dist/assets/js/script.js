@@ -96,9 +96,15 @@ async function fetchData(type = "skills") {
 const skillGroups = [
     {
         title: 'Cloud & Backend',
-        items: ['HuaweiCloud', 'AWS', 'Firebase', 'Postman'],
+        items: ['HuaweiCloud', 'AWS', 'OracleCloud', 'Firebase', 'Postman'],
         accentBg: 'rgba(255, 255, 255, 0.08)',
         accentColor: '#8ed0ff'
+    },
+    {
+        title: 'Computer Vision Tools',
+        items: ['skimage', 'Tesseract', 'OpenCV'],
+        accentBg: 'rgba(255, 255, 255, 0.08)',
+        accentColor: '#ffd6a5'
     },
     {
         title: 'IOT & Systems',
@@ -108,7 +114,7 @@ const skillGroups = [
     },
     {
         title: 'Databases',
-        items: ['MySQL', 'MongoDB'],
+        items: ['PostgreSQL', 'MongoDB'],
         accentBg: 'rgba(255, 255, 255, 0.08)',
         accentColor: '#bfa6ff'
     },
