@@ -403,34 +403,7 @@ header .navbar ul li a:hover {
 .about .row .content .box-container .box p span {
   color: #011aff;
 }
-.resumebtn {
-  margin-top: 6rem;
-}
-.resumebtn .btn {
-  padding: 1.7rem 3rem;
-  border-radius: 0.5em;
-  transition: 0.3s;
-  color: #fff;
-  background: #0051c5;
-  box-shadow: 0px 5px 12px rgba(0, 81, 197, 0.4);
-  font-family: "Nunito", sans-serif;
-}
-.resumebtn .btn span {
-  font-weight: 600;
-  font-size: 1.8rem;
-  letter-spacing: 0.1rem;
-}
-.resumebtn .btn i {
-  margin-left: 0.3rem;
-  font-size: 1.2rem;
-  transition: 0.3s;
-}
-.resumebtn .btn:hover {
-  background: #003f9a;
-}
-.resumebtn .btn:hover i {
-  transform: translateX(5px);
-}
+.resumebtn { /* removed */ }
 /* about media queries starts*/
 @media screen and (max-width: 600px) {
   .about .row .image {

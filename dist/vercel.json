@@ -42,10 +42,7 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/CV_HlaMinMyatHtoo.pdf",
-      "destination": "/CV_HlaMinMyatHtoo.pdf"
-    },
+    
     {
       "source": "/(.*)",
       "destination": "/index.html"
